@@ -1,0 +1,14 @@
+# This file is used by pip to install required python packages
+
+# Main packages
+gunicorn
+Flask
+Jinja2
+
+# Main package dependencies
+blinker
+click
+itsdangerous
+MarkupSafe
+Werkzeug
+packaging
