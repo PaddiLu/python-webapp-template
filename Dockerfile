@@ -31,3 +31,7 @@ EXPOSE 8000
 
 # Define the command to run the Flask application using Gunicorn
 CMD ["gunicorn", "--bind=0.0.0.0:8000", "--workers=2", "--no-control-socket", "main:flaskapp"]
+
+# Store version number as environment variable
+ARG VERSION
+ENV DOCKER_IMAGE_VERSION=${VERSION}
