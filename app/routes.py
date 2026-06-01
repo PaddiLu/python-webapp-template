@@ -22,9 +22,11 @@ _CONTEXT = {
     # Values to be passed to all templates
     'static': _STATIC_ENDPOINT,
     'appname': const.app.NAME,
+    'version': const.app.VERSION
 }
 
 @pages.route('/index')
 @pages.route('/')
 def index():
     return render_template('index.html.j2', **_CONTEXT)
+
