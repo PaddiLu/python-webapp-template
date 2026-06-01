@@ -4,7 +4,7 @@ and for rendering content.
 """
 
 # Imports
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 
 from . import paths
 
@@ -23,7 +23,8 @@ _CONTEXT = {
     'static': _STATIC_ENDPOINT
 }
 
-@pages.route('/index')
-@pages.route('/')
+@pages.route('/index', methods=['GET','POST'])
+@pages.route('/', methods=['GET','POST'])
 def index():
-    return render_template('index.html.j2', **_CONTEXT)
+    name = request.form['name'] if request.method == 'POST' else '' 
+    return render_template('index.html.j2', **_CONTEXT, name = name)
