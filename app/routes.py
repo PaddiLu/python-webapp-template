@@ -16,7 +16,12 @@ pages = Blueprint(_BLUEPRINT_NAME, __name__,
                   static_folder='../static',
                   static_url_path='/static')
 
+_CONTEXT = {
+    # Values to be passed to all templates
+    'static': _STATIC_ENDPOINT
+}
+
 @pages.route('/index')
 @pages.route('/')
 def index():
-    return render_template('index.html.j2', static = _STATIC_ENDPOINT)
+    return render_template('index.html.j2', **_CONTEXT)
