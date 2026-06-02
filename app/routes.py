@@ -6,14 +6,16 @@ and for rendering content.
 # Imports
 from flask import Blueprint, render_template
 
+from . import paths
+
 # Constants
 _BLUEPRINT_NAME = 'pages'
 _STATIC_ENDPOINT = _BLUEPRINT_NAME + '.static'
 
 # Routes
 pages = Blueprint(_BLUEPRINT_NAME, __name__,
-                  template_folder='templates',
-                  static_folder='../static',
+                  template_folder=paths.TEMPLATES,
+                  static_folder=paths.STATIC,
                   static_url_path='/static')
 
 _CONTEXT = {
