@@ -10,3 +10,15 @@ from typing import final
 class directories(ABC):
     STATIC = 'static'
     TEMPLATES = 'templates'
+
+@final
+class env(ABC):
+    """Names of environmental variables"""
+    CONFIG = 'DOCKER_CONFIG_FILE'
+
+@final
+class conf(ABC):
+    """Keys and default values for the config file."""
+    CONTACT_KEY = 'contact'
+    CONTACT_DEFAULT = {
+    }
