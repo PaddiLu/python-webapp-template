@@ -9,6 +9,11 @@
 
 <body>
 	<h1>Hello {{ name or 'World' }}!</h1>
+	<form  method="post" action="/" enctype="multipart/form-data">
+		{{ form.csrf_token }}
+		<p>{{ form.name.label }} {{ form.name() }}</p>
+		<p><input type="submit" value="Submit"></p>
+	</form>
 </body>
 
 </html>

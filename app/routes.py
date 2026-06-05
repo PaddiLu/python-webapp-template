@@ -5,6 +5,9 @@ and for rendering content.
 
 # Imports
 from flask import Blueprint, render_template, request
+from flask_wtf import FlaskForm
+from wtforms import StringField
+from wtforms.validators import InputRequired
 
 from . import paths
 
@@ -26,5 +29,9 @@ _CONTEXT = {
 @pages.route('/index', methods=['GET','POST'])
 @pages.route('/', methods=['GET','POST'])
 def index():
-    name = request.form['name'] if request.method == 'POST' else '' 
-    return render_template('index.html.j2', **_CONTEXT, name = name)
+    class MyForm(FlaskForm):
+        name = StringField('Name', validators=[InputRequired()])
+
+    form = MyForm()
+    name = form.name.data if form.validate_on_submit() else '' 
+    return render_template('index.html.j2', **_CONTEXT, name = name, form = form)
