@@ -27,3 +27,7 @@ class conf(ABC):
     CONTACT_KEY = 'contact'
     CONTACT_DEFAULT = {
     }
+
+    SECTIONS = (
+        (CONTACT_KEY, CONTACT_DEFAULT),
+    )
