@@ -7,6 +7,8 @@ and for rendering content.
 # Imports
 import flask
 
+from . import paths
+
 
 # Constants
 _BLUEPRINT_NAME = 'pages'
@@ -20,8 +22,8 @@ _BLUEPRINT_CONTEXT = {
 # Blueprints
 pages = flask.Blueprint(
     _BLUEPRINT_NAME, __name__,
-    template_folder='templates',
-    static_folder='../static',
+    template_folder=paths.TEMPLATES,
+    static_folder=paths.STATIC,
     static_url_path='/static',
 )
 pages.context_processor(lambda : _BLUEPRINT_CONTEXT)
