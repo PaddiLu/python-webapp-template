@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+{%- block head %}
+	<meta charset="utf-8">
+	<title>{% block title %}Server Hello World{% endblock %}</title>
+	<link rel="icon" href="{{ url_for(static, filename='favicon/favicon.ico') }}" sizes="16x16">
+{% endblock -%}
+</head>
+
+<body>
+{%- block body %}
+	<h1>Hello World!</h1>
+{% endblock -%}
+</body>
+
+</html>
