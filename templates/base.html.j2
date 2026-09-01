@@ -4,6 +4,7 @@
 <head>
 {%- block head %}
 	<meta charset="utf-8">
+	<meta name="application-name" content="{{ app.NAME|e }}" />
 	<title>{% block title %}Server Hello World{% endblock %}</title>
 	<link rel="icon" href="{{ url_for(static, filename='favicon/favicon.ico') }}" sizes="16x16">
 {% endblock -%}

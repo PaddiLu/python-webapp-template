@@ -7,6 +7,7 @@ and for rendering content.
 # Imports
 import flask
 
+from . import const
 from . import paths
 
 
@@ -15,6 +16,7 @@ _BLUEPRINT_NAME = 'pages'
 _STATIC_ENDPOINT = _BLUEPRINT_NAME + '.static'
 
 _BLUEPRINT_CONTEXT = {
+    'app': const.app,
     'static': _STATIC_ENDPOINT,
 }
 
