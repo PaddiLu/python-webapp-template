@@ -7,6 +7,11 @@ import tomllib
 from . import const
 
 
+# Global variables
+_cached_config = const.config.DEFAULT
+_caching_timestamp = None
+
+
 def _evaluate_loaded_config(config: dict, default: dict) -> dict:
     """
     Parses a loaded config in dict form,
@@ -32,15 +37,24 @@ def fetch() -> dict:
     Returns the default config if the config file is unavailable.
     """
 
+    from os.path import getmtime
+
     from .paths import CONFIG as configpath
 
+    global _cached_config, _caching_timestamp
+
     try:
+        file_timestamp = getmtime(configpath)
+        if file_timestamp == _caching_timestamp:
+            # Return cached config if cache is up to date
+            return _cached_config
         with open(configpath, 'rb') as f:
             config = tomllib.load(f)
     except(FileNotFoundError, IsADirectoryError, PermissionError):
         return const.config.DEFAULT
     
     # Substitute missing values with defaults
-    out = _evaluate_loaded_config(config, const.config.DEFAULT)
+    _cached_config = _evaluate_loaded_config(config, const.config.DEFAULT)
+    _caching_timestamp = file_timestamp
 
-    return out
+    return _cached_config
