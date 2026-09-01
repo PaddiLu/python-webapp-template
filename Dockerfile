@@ -18,7 +18,9 @@ RUN pip3 install --upgrade pip && pip3 install --no-cache-dir --upgrade -r "${wo
 # Setup non-root user to run the app (security best practice)
 ARG UID=10001
 RUN adduser --disabled-password --gecos "" --home "/nonexistent" --shell "/sbin/nologin" --no-create-home --uid "${UID}" appuser
-USER appuser
+
+# Copy system files into the container
+COPY --chmod=0755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 # Copy the Python app into the container
 COPY main.py "${workdir}/"
@@ -29,5 +31,6 @@ COPY app/ "${workdir}/app/"
 # Expose a port for the web application
 EXPOSE 5000
 
-# Define the command to run the Flask application using Gunicorn
+# Define default executable and the command to run the Flask application using Gunicorn
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["gunicorn", "--bind=0.0.0.0:5000", "--workers=2", "--no-control-socket", "main:flaskapp"]
