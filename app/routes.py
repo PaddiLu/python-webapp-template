@@ -5,6 +5,8 @@ and for rendering content.
 
 
 # Imports
+from os import environ
+
 import flask
 
 from . import const
@@ -18,6 +20,7 @@ _STATIC_ENDPOINT = _BLUEPRINT_NAME + '.static'
 _BLUEPRINT_CONTEXT = {
     'app': const.app,
     'static': _STATIC_ENDPOINT,
+    'version': environ.get(const.env.VERSION, '')
 }
 
 

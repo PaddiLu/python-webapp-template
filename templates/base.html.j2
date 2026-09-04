@@ -4,7 +4,7 @@
 <head>
 {%- block head %}
 	<meta charset="utf-8">
-	<meta name="application-name" content="{{ app.NAME|e }}" />
+	<meta name="application-name" content="{{ app.NAME|e }}" />{% if version %} <!--{{ version|e }}-->{% endif %}
 	<title>{% block title %}Server Hello World{% endblock %}</title>
 	<link rel="icon" href="{{ url_for(static, filename='favicon/favicon.ico') }}" sizes="16x16">
 {% endblock -%}

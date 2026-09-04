@@ -20,4 +20,4 @@ class directories(ABC):
 class env(ABC):
     """Names of environmental variables"""
 
-    pass
+    VERSION = 'DOCKER_IMAGE_VERSION'
