@@ -15,3 +15,9 @@ class app(ABC):
 class directories(ABC):
     STATIC = 'static'
     TEMPLATES = 'templates'
+
+@final
+class env(ABC):
+    """Names of environmental variables"""
+
+    pass
