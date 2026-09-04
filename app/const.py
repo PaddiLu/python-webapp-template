@@ -30,3 +30,10 @@ class config(ABC):
         # Maps keys used in config dictionaries
         # to keys used in config file
     }
+
+    TOML_HEADER = '# This is a TOML config file'
+    TOML_VALID_KEY_REGEX = '^[A-Za-z0-9_-]+$'
+
+    TABLES: tuple[tuple[str, ...], ...] = (
+        # These keys will be used as headers in the TOML file
+    )

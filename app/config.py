@@ -29,6 +29,70 @@ def _evaluate_loaded_config(config: dict, default: dict) -> dict:
             out[key] = config[mappedkey]
     return out
 
+def generate_toml(config: dict) -> str:
+    """
+    Generates the contents of a TOML config
+    from a config in dictionary form.
+    """
+    from re import compile as compile_regex
+    import typing
+
+    KEY_VALIDATOR = compile_regex(const.config.TOML_VALID_KEY_REGEX)
+
+    def _get_config_key(setting: str) -> str:
+        """Get the key to use for setting in TOML"""
+        result = const.config.KEYS.get(setting, setting)
+        if not bool(KEY_VALIDATOR.match(result)):
+            # Keys with invalid characters must be quoted
+            result = ''.join(('"', result, '"'))
+        return result
+
+    def _setting_to_str(setting: tuple[str, ...], value: typing.Any) -> str:
+        """Return setting formatted for TOML"""
+        key = '.'.join((_get_config_key(s) for s in setting))
+        formatted_value = '"' + str(value) + '"'
+        return(' '.join((key, '=', formatted_value)))
+
+    def _evaluate_group(contents: dict, group: tuple[str, ...] = (), table: tuple[str, ...] = ()) -> tuple[list[str],list[tuple[tuple[str, ...], list[str]]]]:
+        """Convert dict to list of settings recursively"""
+
+        top_level_settings = []
+        grouped_settings = []
+        subtables: list[tuple[tuple[str, ...], list[str]]] = []
+
+        for key, value in contents.items():
+            group_key = (*group, key)
+            if isinstance(value, dict):
+                full_key = table + group_key
+                if full_key in const.config.TABLES:
+                    # This is a seperate table
+                    new_table, new_subtables = _evaluate_group(value, table=full_key)
+                    subtables.append((full_key, new_table))
+                    subtables.extend(new_subtables)
+                else:
+                    # Subgroup of settings for current table
+                    new_settings, new_subtables = _evaluate_group(value, group_key)
+                    grouped_settings.extend(new_settings)
+                    subtables.extend(new_subtables)
+            else:
+                # New setting for current group
+                top_level_settings.append(_setting_to_str(group_key, value))
+        return (top_level_settings + grouped_settings), subtables
+
+    # Evaluate config; generate tables as lists
+    top_level_settings, tables = _evaluate_group(config)
+    if top_level_settings:
+        tables = (((), top_level_settings), *tables)
+    # Format as TOML
+    text_blocks = [const.config.TOML_HEADER]
+    for group, content in tables:
+        if group:
+            key = '.'.join((_get_config_key(s) for s in group))
+            header = ''.join(('[', key, ']'))
+            content = (header, *content)
+        text_blocks.append('\n'.join(content))
+    return '\n\n'.join(text_blocks)
+
 def fetch() -> dict:
     """
     Loads and parses the config file,
