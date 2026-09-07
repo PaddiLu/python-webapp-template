@@ -34,6 +34,8 @@ def generate_toml(config: dict) -> str:
     Generates the contents of a TOML config
     from a config in dictionary form.
     """
+    import datetime as dt
+    from numbers import Number
     from re import compile as compile_regex
     import typing
 
@@ -50,7 +52,23 @@ def generate_toml(config: dict) -> str:
     def _setting_to_str(setting: tuple[str, ...], value: typing.Any) -> str:
         """Return setting formatted for TOML"""
         key = '.'.join((_get_config_key(s) for s in setting))
-        formatted_value = '"' + str(value) + '"'
+        if isinstance(value, bool):
+            formatted_value = 'true' if value else 'false'
+        elif isinstance(value, (dt.datetime, dt.date, dt.time)):
+            formatted_value = value.isoformat()
+        elif isinstance(value, Number):
+            formatted_value = str(value)
+        elif isinstance(value,(list,tuple)):
+            value = str([_setting_to_str(item) for item in value])
+        else: # Treat as string
+            formatted_value = str(value)
+            for char, escape in const.config.TOML_ESCAPE_CHAR_MAP:
+                if char in formatted_value:
+                    formatted_value = formatted_value.replace(char, escape)
+            if '\n' in formatted_value:
+                formatted_value = ''.join(('"""\n', formatted_value, '"""'))
+            else:
+                formatted_value = ''.join(('"', formatted_value, '"'))
         return(' '.join((key, '=', formatted_value)))
 
     def _evaluate_group(contents: dict, group: tuple[str, ...] = (), table: tuple[str, ...] = ()) -> tuple[list[str],list[tuple[tuple[str, ...], list[str]]]]:
