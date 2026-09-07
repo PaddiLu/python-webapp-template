@@ -71,12 +71,12 @@ def generate_toml(config: dict) -> str:
                 formatted_value = ''.join(('"', formatted_value, '"'))
         return(' '.join((key, '=', formatted_value)))
 
-    def _evaluate_group(contents: dict, group: tuple[str, ...] = (), table: tuple[str, ...] = ()) -> tuple[list[str],list[tuple[tuple[str, ...], list[str]]]]:
+    def _evaluate_group(contents: dict, group: tuple[str, ...] = (), table: tuple[str, ...] = ()) -> tuple[list[str],list[tuple[tuple[str, ...], list[str], bool]]]:
         """Convert dict to list of settings recursively"""
 
         top_level_settings = []
         grouped_settings = []
-        subtables: list[tuple[tuple[str, ...], list[str]]] = []
+        subtables: list[tuple[tuple[str, ...], list[str], bool]] = []
 
         for key, value in contents.items():
             group_key = (*group, key)
@@ -85,12 +85,20 @@ def generate_toml(config: dict) -> str:
                 if full_key in const.config.TABLES:
                     # This is a seperate table
                     new_table, new_subtables = _evaluate_group(value, table=full_key)
-                    subtables.append((full_key, new_table))
+                    subtables.append((full_key, new_table, False))
                     subtables.extend(new_subtables)
                 else:
                     # Subgroup of settings for current table
                     new_settings, new_subtables = _evaluate_group(value, group_key)
                     grouped_settings.extend(new_settings)
+                    subtables.extend(new_subtables)
+            elif isinstance(value, (list,tuple)) and any(isinstance(x, dict) for x in value):
+                # This is an array of tables
+                full_key = table + group_key
+                for subtable in value:
+                    assert isinstance(subtable, dict), 'Mix of dict and non-dict values in setting %s' % '.'.join(full_key)
+                    new_table, new_subtables = _evaluate_group(subtable, table=full_key)
+                    subtables.append((full_key, new_table, True))
                     subtables.extend(new_subtables)
             else:
                 # New setting for current group
@@ -103,10 +111,10 @@ def generate_toml(config: dict) -> str:
         tables = (((), top_level_settings), *tables)
     # Format as TOML
     text_blocks = [const.config.TOML_HEADER]
-    for group, content in tables:
+    for group, content, isarray in tables:
         if group:
             key = '.'.join((_get_config_key(s) for s in group))
-            header = ''.join(('[', key, ']'))
+            header = ''.join(('[[', key, ']]')) if isarray else ''.join(('[', key, ']'))
             content = (header, *content)
         text_blocks.append('\n'.join(content))
     return '\n\n'.join(text_blocks)
