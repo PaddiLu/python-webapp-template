@@ -36,7 +36,7 @@ class config(ABC):
         # to keys used in config file
     }
 
-    TOML_HEADER = '# This is a TOML config file'
+    TOML_HEADER = '# This is a TOML config file for %s' % app.NAME
     TOML_VALID_KEY_REGEX = '^[A-Za-z0-9_-]+$'
     TOML_ESCAPE_CHAR_MAP = (
         ('\\','\\\\'), ('"', '\\"'), ('\t', '\\t'), ('\f', '\\f'),
