@@ -25,6 +25,7 @@ COPY main.py "${workdir}/"
 COPY templates/ "${workdir}/templates/"
 COPY static/ "${workdir}/static/"
 COPY app/ "${workdir}/app/"
+COPY --chmod=+x tools/generate_config.py "${workdir}/tools/"
 
 # Expose a port for the web application
 EXPOSE 5000
